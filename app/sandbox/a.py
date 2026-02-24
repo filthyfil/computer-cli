@@ -1,7 +1,7 @@
 from sympy import symbols, integrate
 
 x = symbols('x')
-expr = 3 * x**2
-integral = integrate(expr, x)
+expression = 3 * x**5
+integral = integrate(expression, x)
 
 print(integral)
