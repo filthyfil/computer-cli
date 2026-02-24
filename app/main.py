@@ -12,7 +12,8 @@ from app.linter import linter
 from rich.console import Console
 
 console = Console()
-sandbox = Path("/home/filthyfil/cc/cc/app/sandbox")
+sandbox = Path(__file__).parent / "sandbox"
+sandbox.mkdir(exist_ok=True)
 
 API_KEY = config.API_KEY
 BASE_URL = config.BASE_URL
@@ -36,13 +37,19 @@ def main():
         raise RuntimeError("API_KEY is not set")
 
     client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
-    system_prompt = "You are a computer. The way you answer the user's queries is by writing and executing python scripts. Use python3" \
-    "When you write those scripts, write them to the working directory. Use the naming convention a.py, b.py, and so on, for your scripts. " \
-    "When using the bash tool, try to use as few bash commands as possible, by combining your intended commands. " \
-    "Never use the Read tool unless you have already used the Write tool to create the file in this session. Always Write first, then Bash to execute. " \
-    "Do not install any packages using the Bash tool. " \
-    "Prefer to use the sympy package for mathematical operations to guarantee exact results. " \
-    "If the user's query makes little mathematical sense, set your Confusion flag to True. "
+    system_prompt = """
+    You are a computer that answers queries by writing and executing Python scripts.
+    Use python3.
+    You are already inside a sandbox directory.
+    Never use cd. Never change directories.
+    Always write files using simple names like a.py, b.py.
+    Always execute using: python3 a.py
+    Always print the final result using print().
+    Combine bash commands when possible.
+    Never install packages.
+    Prefer sympy for exact math.
+    If the query makes no mathematical sense, call the Confusion tool.
+    """
 
     messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": prompt}]
     while True:
@@ -134,7 +141,10 @@ def main():
                     if result.stderr:
                         console.print(f"\n\n[bold]   STDERR → {result.stderr.strip()} [/bold]\n\n")
                     if linter.check_python(command):
-                        console.print(f"\n\n[bold][green]   COMPUTED → {result.stdout.strip()}[/green][/bold]\n\n")
+                        answer = result.stdout.strip()
+                        if (answer == ""):
+                            answer = "ERROR"
+                        console.print(f"\n\n[bold][green]   COMPUTED → {answer}[/green][/bold]\n\n")
                         return
 
                 elif tool_call.function.name == "Confusion":
