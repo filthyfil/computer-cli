@@ -1,7 +1,13 @@
-from sympy import symbols, integrate
+import sympy as sp
 
-x = symbols('x')
-expression = 3 * x**5
-integral = integrate(expression, x)
+# Define the matrix
+matrix = sp.Matrix([
+    [1, 0, -2],
+    [-3, 1, 4],
+    [2, -3, 4]
+])
 
-print(integral)
+# Calculate the inverse
+inverse_matrix = matrix.inv()
+
+print(inverse_matrix)

@@ -1,5 +1,5 @@
 class Linter():
-    unsafe_bash_dict = ["~", ," / ", "..", "mv", "cp", "rm", "chmod", "chown", "chgrp", "ln", "mkdir", "rmdir", "mkfs", "mount", "umount", "dd", "parted", "fdisk", "sfdisk", "sgdisk", "cfdisk"]
+    unsafe_bash_dict = ["~"," / ", "..", "mv", "cp", "rm", "chmod", "chown", "chgrp", "ln", "mkdir", "rmdir", "mkfs", "mount", "umount", "dd", "parted", "fdisk", "sfdisk", "sgdisk", "cfdisk"]
     unsafe_write_dict = [" os", " subprocess"]
     unsafe_filepath_dict = ["~", ".."]
 
